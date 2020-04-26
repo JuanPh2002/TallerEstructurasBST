@@ -41,9 +41,9 @@ public class BinarySearchTree {
     public void Postorden() {
         Postorden(root);
     }
-    
+
     private void Postorden(BinaryNode currentRoot) {
-        if (currentRoot != null ) {
+        if (currentRoot != null) {
             Postorden(currentRoot.getLeft());
             Postorden(currentRoot.getRight());
             System.out.print(currentRoot.getData() + " ");
@@ -51,12 +51,12 @@ public class BinarySearchTree {
     }
 
     //Punto 3
-    public void PreOrden(){
+    public void PreOrden() {
         PreOrden(root);
     }
-    
+
     private void PreOrden(BinaryNode currentRoot) {
-        if (currentRoot != null ) {
+        if (currentRoot != null) {
             System.out.print(currentRoot.getData() + " ");
             PreOrden(currentRoot.getLeft());
             PreOrden(currentRoot.getRight());
@@ -67,16 +67,16 @@ public class BinarySearchTree {
     public int CountNodes() {
         return CountNodes(root);
     }
-    
+
     private int CountNodes(BinaryNode currentRoot) {
         int cont = 0;
-        if(currentRoot != null) {
+        if (currentRoot != null) {
             cont++;
         }
-        if(currentRoot.getLeft() != null) {
+        if (currentRoot.getLeft() != null) {
             cont += CountNodes(currentRoot.getLeft());
         }
-        if(currentRoot.getRight() != null) {
+        if (currentRoot.getRight() != null) {
             cont += CountNodes(currentRoot.getRight());
         }
         return cont;
@@ -86,27 +86,27 @@ public class BinarySearchTree {
     public int CountLeafs() {
         return CountLeafs(root);
     }
-    
-    private int CountLeafs(BinaryNode currentRoot)  {
+
+    private int CountLeafs(BinaryNode currentRoot) {
         int cont = 0;
 //        if(currentRoot == null){
 //            return 0;
 //        }
-        if(isLeaf(currentRoot)) {
+        if (isLeaf(currentRoot)) {
             cont++;
         }
-        if(currentRoot.getLeft() != null) {
+        if (currentRoot.getLeft() != null) {
             cont += CountLeafs(currentRoot.getLeft());
         }
-        if(currentRoot.getRight() != null) {
+        if (currentRoot.getRight() != null) {
             cont += CountLeafs(currentRoot.getRight());
         }
         return cont;
     }
-    
+
     //Devuelve true si el nodo es hoja
     private boolean isLeaf(BinaryNode node) {
-        if(node.getLeft() == null && node.getRight() == null) {
+        if (node.getLeft() == null && node.getRight() == null) {
             return true;
         }
         return false;
@@ -174,36 +174,39 @@ public class BinarySearchTree {
     }
 
     private void Delete(int data, BinaryNode currentRoot) {
-
+        //Me sacaba excepcion y valide que el nodo v fuera != null y funcionó
         BinaryNode v = Search(data);
-        if (v.isLeaf()) {
-            if (position) {
-                father.setRight(null);
+        if (v != null) {
+            if (v.isLeaf()) {
+                if (position) {
+                    father.setRight(null);
+                } else {
+                    father.setLeft(null);
+                }
+            } else if (v.hasOneChild()) {
+                if (v.isChildPosition()) {
+                    father.setRight(v.getRight());
+                } else {
+                    father.setLeft(v.getLeft());
+                }
             } else {
-                father.setLeft(null);
+                BinaryNode minimum = getMinor(v.getRight());
+                Delete(minimum.getData());
+                v.setData(minimum.getData());
             }
-        } else if (v.hasOneChild()) {
-            if (v.isChildPosition()) {
-                father.setRight(v.getRight());
-            } else {
-                father.setLeft(v.getLeft());
-            }
-        } else {
-            BinaryNode minimum = getMinor(v.getRight());
-            Delete(minimum.getData());
-            v.setData(minimum.getData());
         }
+
     }
 
-    
     //Punto 7
     int altura;
+
     public int LastLevel() {
         altura = 0;
         LastLevel(root, 1);
         return altura;
     }
-    
+
     private void LastLevel(BinaryNode currentRoot, int level) {
         if (currentRoot != null) {
             LastLevel(currentRoot.getLeft(), level + 1);
@@ -218,26 +221,29 @@ public class BinarySearchTree {
     //Me imprime como es pero no me reconoce el resultado correcto en el tester, 
     //tal vez por la forma de imprimir o no se si será por el null en la pos 0
     String[] niveles;
+
     public void LevelOrder() {
         /* 
-        Para mostrar los datos se recomienda usar:
-            System.out.print(x.getData()+" ");
-        donde x representa un nodo del árbol
+         Para mostrar los datos se recomienda usar:
+         System.out.print(x.getData()+" ");
+         donde x representa un nodo del árbol
 
-        Para generar un salto de linea se recomienda usar:
-            System.out.print("\n");
+         Para generar un salto de linea se recomienda usar:
+         System.out.print("\n");
         
          */
-        niveles = new String [LastLevel()+1];
-        LevelOrder(root,1);
+        niveles = new String[LastLevel() + 1];
+        LevelOrder(root, 1);
+        String cadena = "";
         for (int i = 1; i < niveles.length; i++) {
             //System.out.println("En el nivel " + i +" --> " + niveles[i]);
-            System.out.println(niveles[i]);
+            cadena += niveles[i] + "\n";
         }
+        System.out.println(cadena);
     }
-    
+
     private void LevelOrder(BinaryNode currentRoot, int level) {
-        if(currentRoot != null) {
+        if (currentRoot != null) {
             niveles[level] = currentRoot.getData() + " " + ((niveles[level] != null) ? niveles[level] : "");
             LevelOrder(currentRoot.getRight(), level + 1);
             LevelOrder(currentRoot.getLeft(), level + 1);
